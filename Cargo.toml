@@ -9,3 +9,6 @@ edition = "2021"
 smarthome = {path = "../smarthome"}
 anyhow = "1.0.57"
 thiserror = "1.0.31"
+async-trait = "0.1.57"
+tokio = { version = "1.15.0", features = ["net", "macros", "rt-multi-thread", "fs"] }
+async_io = {path = "../async_io"}

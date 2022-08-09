@@ -2,14 +2,16 @@ use anyhow::Result;
 use smarthome::SmartSocket;
 use smarthome::*;
 use smarthome_udp_server::{HomeConnection, SmartUdpThermometer};
-use std::net::UdpSocket;
+use tokio::{self, net::UdpSocket};
 
-fn main() -> Result<()> {
+#[tokio::main]
+async fn main() -> Result<()> {
     let mut home = create_home()?;
 
     let connection = loop {
-        let udp = UdpSocket::bind("127.0.0.1:8095")?;
-        match HomeConnection::new(udp) {
+        let udp = UdpSocket::bind("127.0.0.1:8095").await?;
+        println!("Server started on {}", udp.local_addr()?);
+        match HomeConnection::new(udp).await {
             Ok(server) => {
                 println!("connected!");
                 break server;
@@ -21,7 +23,7 @@ fn main() -> Result<()> {
         }
     };
 
-    connection.stream_themperature(&mut home)?;
+    connection.stream_themperature(&mut home).await?;
 
     Ok(())
 }
